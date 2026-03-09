@@ -1,0 +1,62 @@
+/* rota escondida - novo projeto */
+
+.admin-section{
+    background-color: #000;
+    color: #fff;
+    padding: 120px 10%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.admin-container{
+    width: 100%;
+    max-width: 600px;
+}
+
+.admin-title{
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.admin-form{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.admin-form input{
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 14px;
+    border-radius: 6px;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.admin-form input:focus{
+    border-color: #fff;
+}
+
+.admin-btn{
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.admin-btn:hover{
+    background: #32b4c5;
+    color: #fff;
+    transform: translateY(-3px);
+}
