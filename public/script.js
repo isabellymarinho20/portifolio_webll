@@ -370,12 +370,12 @@ async function salvarEdicaoExp(){
 
 window.onload = function(){
 
-    
+    carregarJanelaCodigo()
     carregarProjetos();
     carregarCertificados();
     carregarFormacao();
     carregarExperiencia();
-    carregarJanelaCodigo();
+    
 
     
     if(formProjeto){
