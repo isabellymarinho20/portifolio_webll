@@ -27,381 +27,420 @@ function carregarJanelaCodigo() {
     `;
 }
 
-async function listarProjetosAdmin(){
+// --- PROJETOS ---
+
+async function listarProjetos() {
     const grid = document.querySelector('.projects-grid');
     if(!grid) return;
 
-    const res = await fetch('/api/projetos');
-    const projetos = await res.json();
+    try {
+        const res = await fetch('/api/projetos');
+        const projetos = await res.json();
 
-    grid.innerHTML = projetos.map((p, i) => `
-        <div class="admin-card">
-            <div>
-                <strong>${p.titulo}</strong>
-                <p>${p.tech}</p>
+        
+        const isAdmin = !!document.getElementById('formProjeto');
+
+        grid.innerHTML = projetos.map((p, i) => `
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="${p.img}" alt="${p.titulo}">
+                </div>
+                <div class="project-info">
+                    <h3 class="project-card-title">${p.titulo}</h3>
+                    <p class="project-tech">${p.tech}</p>
+                    <p class="project-description">${p.desc}</p>
+                    
+                    ${isAdmin ? `
+                        <div class="admin-actions">
+                            <button class="btn-outline" onclick="editarProjeto(${i})">Editar</button>
+                            <button class="btn-outline btn-delete" onclick="deletarProjeto(${i})">Excluir</button>
+                        </div>
+                    ` : `
+                        <a href="${p.link}" target="_blank" class="btn-view-project">Ver Projeto</a>
+                    `}
+                </div>
             </div>
-            <div>
-                <button onclick="editarProjeto(${i})">✏️</button>
-                <button onclick="deletarProjeto(${i})">🗑️</button>
-            </div>
-        </div>
-    `).join("");
+        `).join("");
+    } catch (err) {
+        console.error("Erro ao carregar projetos:", err);
+    }
 }
 
-function editarProjeto(id){
-    localStorage.setItem("editProjeto", id);
-    window.location.href = "novoprojeto.html";
-}
-
-async function deletarProjeto(id){
-    await fetch(`/api/projetos/${id}`, { method: 'DELETE' });
-    listarProjetosAdmin();
-}
-
-async function adicionarProjeto(e){
+async function adicionarProjeto(e) {
     e.preventDefault();
-
     const novo = {
-        titulo: tituloProjeto.value,
-        tech: techProjeto.value,
-        desc: descProjeto.value,
-        link: linkProjeto.value,
-        img: imgProjeto.value
+        titulo: document.getElementById('tituloProjeto').value,
+        tech: document.getElementById('techProjeto').value,
+        desc: document.getElementById('descProjeto').value,
+        link: document.getElementById('linkProjeto').value,
+        img: document.getElementById('imgProjeto').value
     };
 
-    await fetch('/api/projetos', {
+    const response = await fetch('/api/projetos', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(novo)
     });
 
-    window.location.href = "index.html";
+    if (response.ok) {
+        alert("Projeto adicionado!");
+        window.location.href = "index.html";
+    }
 }
 
-async function carregarEdicaoProjeto(){
+async function salvarEdicao() {
     const id = localStorage.getItem("editProjeto");
-    if(id === null) return;
+    const atualizado = {
+        titulo: document.getElementById('tituloProjeto').value,
+        tech: document.getElementById('techProjeto').value,
+        desc: document.getElementById('descProjeto').value,
+        link: document.getElementById('linkProjeto').value,
+        img: document.getElementById('imgProjeto').value
+    };
 
-    const res = await fetch('/api/projetos');
+    const response = await fetch(`/api/projetos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(atualizado)
+    });
+
+    if (response.ok) {
+        localStorage.removeItem("editProjeto");
+        alert("Projeto atualizado!");
+        window.location.href = "index.html";
+    }
+}
+
+async function preencherCamposEdicao(id) {
+    const res = await fetch('/api/projetos'); 
     const projetos = await res.json();
     const p = projetos[id];
 
-    tituloProjeto.value = p.titulo;
-    techProjeto.value = p.tech;
-    descProjeto.value = p.desc;
-    linkProjeto.value = p.link;
-    imgProjeto.value = p.img;
+    if (p) {
+        document.getElementById('tituloProjeto').value = p.titulo;
+        document.getElementById('techProjeto').value = p.tech;
+        document.getElementById('descProjeto').value = p.desc;
+        document.getElementById('linkProjeto').value = p.link;
+        document.getElementById('imgProjeto').value = p.img;
+        document.querySelector('.admin-btn').innerText = "Confirmar Alterações";
+    }
 }
 
-async function salvarEdicaoProjeto(){
-    const id = localStorage.getItem("editProjeto");
-    if(id === null) return;
+function editarProjeto(id) { localStorage.setItem("editProjeto", id); window.location.href = "novoprojeto.html"; }
+async function deletarProjeto(id) {
+    
+    if (confirm("Tem certeza que deseja excluir este projeto?")) {
+        try {
+            const response = await fetch(`/api/projetos/${id}`, { 
+                method: 'DELETE' 
+            });
 
-    const atualizado = {
-        titulo: tituloProjeto.value,
-        tech: techProjeto.value,
-        desc: descProjeto.value,
-        link: linkProjeto.value,
-        img: imgProjeto.value
-    };
-
-    await fetch(`/api/projetos/${id}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(atualizado)
-    });
-
-    localStorage.removeItem("editProjeto");
-    window.location.href = "index.html";
+            if (response.ok) {
+                listarProjetos(); 
+            } else {
+                alert("Erro ao excluir o projeto.");
+            }
+        } catch (err) {
+            console.error("Erro na requisição de exclusão:", err);
+        }
+    }
 }
 
-async function listarCertificadosAdmin(){
+// --- CERTIFICADOS ---
+
+async function listarCertificados() {
     const grid = document.querySelector('.cert_grid');
     if(!grid) return;
 
-    const res = await fetch('/api/certificados');
-    const data = await res.json();
+    try {
+        const res = await fetch('/api/certificados');
+        const data = await res.json();
+        
+        
+        const isFormPage = !!document.getElementById('formCertificado');
 
-    grid.innerHTML = data.map((c,i) => `
-        <div class="admin-card">
-            <div>
-                <strong>${c.titulo}</strong>
-                <p>${c.instituicao}</p>
+        grid.innerHTML = data.map((c, i) => `
+            <div class="admin-card">
+                <div class="info">
+                    <strong>${c.titulo}</strong>
+                    <p>${c.instituicao}</p>
+                </div>
+                ${isFormPage ? `
+                <div class="actions">
+                    <button class="btn-outline" onclick="editarCert(${i})">Editar</button>
+                    <button class="btn-outline btn-delete" onclick="deletarCert(${i})">Excluir</button>
+                </div>
+                ` : ''}
             </div>
-            <div>
-                <button onclick="editarCert(${i})">✏️</button>
-                <button onclick="deletarCert(${i})">🗑️</button>
-            </div>
-        </div>
-    `).join("");
+        `).join("");
+    } catch (err) {
+        console.error("Erro ao listar certificados:", err);
+    }
 }
 
-function editarCert(id){
-    localStorage.setItem("editCert", id);
-    window.location.href = "novocertificado.html";
-}
-
-async function deletarCert(id){
-    await fetch(`/api/certificados/${id}`, { method: 'DELETE' });
-    listarCertificadosAdmin();
-}
-
-async function adicionarCertificado(e){
+async function adicionarCertificado(e) {
     e.preventDefault();
-
     const novo = {
-        titulo: tituloCert.value,
-        instituicao: instCert.value,
-        categoria: categoriaCert.value
+        titulo: document.getElementById('tituloCert').value,
+        instituicao: document.getElementById('instCert').value,
+        categoria: document.getElementById('categoriaCert').value
     };
-
     await fetch('/api/certificados', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(novo)
     });
-
     window.location.href = "index.html";
 }
 
-async function carregarEdicaoCert(){
+async function salvarEdicaoCert() {
     const id = localStorage.getItem("editCert");
-    if(id === null) return;
-
-    const res = await fetch('/api/certificados');
-    const data = await res.json();
-    const c = data[id];
-
-    tituloCert.value = c.titulo;
-    instCert.value = c.instituicao;
-    categoriaCert.value = c.categoria;
-}
-
-async function salvarEdicaoCert(){
-    const id = localStorage.getItem("editCert");
-    if(id === null) return;
-
     const atualizado = {
-        titulo: tituloCert.value,
-        instituicao: instCert.value,
-        categoria: categoriaCert.value
+        titulo: document.getElementById('tituloCert').value,
+        instituicao: document.getElementById('instCert').value,
+        categoria: document.getElementById('categoriaCert').value
     };
-
     await fetch(`/api/certificados/${id}`, {
-        method:'PUT',
-        headers:{'Content-Type':'application/json'},
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(atualizado)
     });
-
     localStorage.removeItem("editCert");
     window.location.href = "index.html";
 }
 
+async function preencherCamposEdicaoCert(id) {
+    const res = await fetch('/api/certificados');
+    const certificados = await res.json();
+    const c = certificados[id];
+    if (c) {
+        document.getElementById('tituloCert').value = c.titulo;
+        document.getElementById('instCert').value = c.instituicao;
+        document.getElementById('categoriaCert').value = c.categoria;
+    }
+}
 
-async function listarFormacoesAdmin(){
-    const container = document.querySelector('.formacoes-lista');
+function editarCert(id) { localStorage.setItem("editCert", id); window.location.href = "novoCertificado.html"; }
+async function deletarCert(id) {
+    if(confirm("Deseja excluir este certificado?")) {
+        await fetch(`/api/certificados/${id}`, { method: 'DELETE' });
+        listarCertificados(); 
+    }
+}
+
+// --- FORMAÇÕES ---
+
+async function listarFormacoes() {
+    
+    const container = document.querySelector('.timeline') || document.querySelector('.formacoes-lista');
     if(!container) return;
 
-    const res = await fetch('/api/formacoes');
-    const data = await res.json();
+    try {
+        const res = await fetch('/api/formacoes');
+        const data = await res.json();
+        const isFormPage = !!document.getElementById('formFormacao');
 
-    container.innerHTML = data.map((f,i)=>`
-        <div class="admin-card">
-            <div>
-                <strong>${f.curso}</strong>
-                <p>${f.instituicao}</p>
-                <span>${f.ano}</span>
+        container.innerHTML = data.map((f, i) => `
+            <div class="admin-card">
+                <div class="info">
+                    <strong>${f.curso}</strong>
+                    <span>${f.ano}</span>
+                    <p>${f.instituicao}</p>
+                </div>
+                ${isFormPage ? `
+                <div class="actions">
+                    <button class="btn-outline" onclick="editarFormacao(${i})">Editar</button>
+                    <button class="btn-outline btn-delete" onclick="deletarFormacao(${i})">Excluir</button>
+                </div>
+                ` : ''}
             </div>
-            <div>
-                <button onclick="editarFormacao(${i})">✏️</button>
-                <button onclick="deletarFormacao(${i})">🗑️</button>
-            </div>
-        </div>
-    `).join("");
+        `).join("");
+    } catch (err) {
+        console.error("Erro ao listar formações:", err);
+    }
 }
 
-function editarFormacao(id){
-    localStorage.setItem("editFormacao", id);
-    window.location.href = "novaformacao.html";
-}
-
-async function deletarFormacao(id){
-    await fetch(`/api/formacoes/${id}`, { method:'DELETE' });
-    listarFormacoesAdmin();
-}
-
-async function adicionarFormacao(e){
+async function adicionarFormacao(e) {
     e.preventDefault();
-
     const nova = {
-        ano: anoFormacao.value,
-        curso: cursoFormacao.value,
-        instituicao: instFormacao.value
+        ano: document.getElementById('anoFormacao').value,
+        curso: document.getElementById('cursoFormacao').value,
+        instituicao: document.getElementById('instFormacao').value
     };
-
-    await fetch('/api/formacoes',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
+    await fetch('/api/formacoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nova)
     });
-
     window.location.href = "index.html";
 }
 
-async function carregarEdicaoFormacao(){
+async function salvarEdicaoFormacao() {
     const id = localStorage.getItem("editFormacao");
-    if(id === null) return;
-
-    const res = await fetch('/api/formacoes');
-    const data = await res.json();
-    const f = data[id];
-
-    anoFormacao.value = f.ano;
-    cursoFormacao.value = f.curso;
-    instFormacao.value = f.instituicao;
-}
-
-async function salvarEdicaoFormacao(){
-    const id = localStorage.getItem("editFormacao");
-    if(id === null) return;
-
-    const atualizado = {
-        ano: anoFormacao.value,
-        curso: cursoFormacao.value,
-        instituicao: instFormacao.value
+    const atualizada = {
+        ano: document.getElementById('anoFormacao').value,
+        curso: document.getElementById('cursoFormacao').value,
+        instituicao: document.getElementById('instFormacao').value
     };
-
-    await fetch(`/api/formacoes/${id}`,{
-        method:'PUT',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(atualizado)
+    await fetch(`/api/formacoes/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(atualizada)
     });
-
     localStorage.removeItem("editFormacao");
     window.location.href = "index.html";
 }
 
+async function preencherCamposEdicaoFormacao(id) {
+    const res = await fetch('/api/formacoes');
+    const data = await res.json();
+    const f = data[id];
+    if (f) {
+        document.getElementById('anoFormacao').value = f.ano;
+        document.getElementById('cursoFormacao').value = f.curso;
+        document.getElementById('instFormacao').value = f.instituicao;
+    }
+}
 
-async function listarExperienciasAdmin(){
-    const container = document.querySelector('.exp-lista');
+function editarFormacao(id) { localStorage.setItem("editFormacao", id); window.location.href = "novaFormacao.html"; }
+async function deletarFormacao(id) {
+    if(confirm("Deseja excluir esta formação?")) {
+        await fetch(`/api/formacoes/${id}`, { method: 'DELETE' });
+        listarFormacoes(); 
+    }
+}
+
+// --- EXPERIÊNCIAS ---
+
+async function listarExperiencias() {
+    
+    const container = document.querySelector('.exp-lista') || document.querySelector('.exp-container');
     if(!container) return;
 
-    const res = await fetch('/api/experiencias');
-    const data = await res.json();
+    try {
+        const res = await fetch('/api/experiencias'); 
+        const data = await res.json();
+        
+        
+        const isFormPage = !!document.getElementById('formExperiencia');
 
-    container.innerHTML = data.map((e,i)=>`
-        <div class="admin-card">
-            <div>
-                <strong>${e.empresa}</strong>
-                <p>${e.cargo}</p>
-                <span>${e.periodo}</span>
+        container.innerHTML = data.map((e, i) => `
+            <div class="admin-card">
+                <div class="info">
+                    <strong>${e.empresa}</strong>
+                    <p><strong>${e.cargo}</strong> | ${e.periodo}</p>
+                </div>
+                ${isFormPage ? `
+                <div class="actions">
+                    <button class="btn-outline" onclick="editarExp(${i})">Editar</button>
+                    <button class="btn-outline btn-delete" onclick="deletarExp(${i})">Excluir</button>
+                </div>
+                ` : ''}
             </div>
-            <div>
-                <button onclick="editarExp(${i})">✏️</button>
-                <button onclick="deletarExp(${i})">🗑️</button>
-            </div>
-        </div>
-    `).join("");
+        `).join("");
+    } catch (err) {
+        console.error("Erro ao listar experiências:", err);
+    }
 }
 
-function editarExp(id){
-    localStorage.setItem("editExp", id);
-    window.location.href = "novaexperiencia.html";
-}
-
-async function deletarExp(id){
-    await fetch(`/api/experiencias/${id}`, { method:'DELETE' });
-    listarExperienciasAdmin();
-}
-
-async function adicionarExperiencia(e){
+async function adicionarExperiencia(e) {
     e.preventDefault();
-
     const nova = {
-        empresa: empresaExp.value,
-        periodo: periodoExp.value,
-        cargo: cargoExp.value,
-        desc: descExp.value
+        empresa: document.getElementById('empresaExp').value,
+        periodo: document.getElementById('periodoExp').value,
+        cargo: document.getElementById('cargoExp').value,
+        desc: document.getElementById('descExp').value
     };
-
-    await fetch('/api/experiencias',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
+    await fetch('/api/experiencias', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nova)
     });
-
     window.location.href = "index.html";
 }
 
-async function carregarEdicaoExp(){
+async function salvarEdicaoExperiencia() {
     const id = localStorage.getItem("editExp");
-    if(id === null) return;
-
-    const res = await fetch('/api/experiencias');
-    const data = await res.json();
-    const e = data[id];
-
-    empresaExp.value = e.empresa;
-    periodoExp.value = e.periodo;
-    cargoExp.value = e.cargo;
-    descExp.value = e.desc;
-}
-
-async function salvarEdicaoExp(){
-    const id = localStorage.getItem("editExp");
-    if(id === null) return;
-
-    const atualizado = {
-        empresa: empresaExp.value,
-        periodo: periodoExp.value,
-        cargo: cargoExp.value,
-        desc: descExp.value
+    const atualizada = {
+        empresa: document.getElementById('empresaExp').value,
+        periodo: document.getElementById('periodoExp').value,
+        cargo: document.getElementById('cargoExp').value,
+        desc: document.getElementById('descExp').value
     };
-
-    await fetch(`/api/experiencias/${id}`,{
-        method:'PUT',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(atualizado)
+    await fetch(`/api/experiencias/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(atualizada)
     });
-
     localStorage.removeItem("editExp");
     window.location.href = "index.html";
 }
 
-window.onload = function(){
+async function preencherCamposEdicaoExp(id) {
+    const res = await fetch('/api/experiencias');
+    const data = await res.json();
+    const e = data[id];
+    if (e) {
+        document.getElementById('empresaExp').value = e.empresa;
+        document.getElementById('periodoExp').value = e.periodo;
+        document.getElementById('cargoExp').value = e.cargo;
+        document.getElementById('descExp').value = e.desc;
+    }
+}
 
-    carregarJanelaCodigo()
-    carregarProjetos();
-    carregarCertificados();
-    carregarFormacao();
-    carregarExperiencia();
-    
+function editarExp(id) { localStorage.setItem("editExp", id); window.location.href = "novaexperiencia.html"; }
+async function deletarExp(id) {
+    if(confirm("Tem certeza que deseja excluir esta experiência?")) {
+        await fetch(`/api/experiencias/${id}`, { method: 'DELETE' }); //
+        listarExperiencias(); 
+    }
+}
+
+
+
+window.onload = function() {
+    carregarJanelaCodigo();
 
     
-    if(formProjeto){
-        formProjeto.addEventListener("submit", adicionarProjeto);
-        listarProjetosAdmin();
-        carregarEdicaoProjeto();
+    if (document.querySelector('.sobreMim_section')) {
+        listarProjetos();
+        listarCertificados();
+        listarFormacoes();
+        listarExperiencias();
     }
 
     
-    if(formCertificado){
-        formCertificado.addEventListener("submit", adicionarCertificado);
-        listarCertificadosAdmin();
-        carregarEdicaoCert();
+    const fProj = document.getElementById('formProjeto');
+    if (fProj) {
+        fProj.addEventListener("submit", adicionarProjeto);
+        listarProjetos();
+        const id = localStorage.getItem("editProjeto");
+        if (id !== null) preencherCamposEdicao(id);
+    }
+
+   
+    const fCert = document.getElementById('formCertificado');
+    if (fCert) {
+        fCert.addEventListener("submit", adicionarCertificado);
+        listarCertificados();
+        const id = localStorage.getItem("editCert");
+        if (id !== null) preencherCamposEdicaoCert(id);
     }
 
     
-    if(formFormacao){
-        formFormacao.addEventListener("submit", adicionarFormacao);
-        listarFormacoesAdmin();
-        carregarEdicaoFormacao();
+    const fForm = document.getElementById('formFormacao');
+    if (fForm) {
+        fForm.addEventListener("submit", adicionarFormacao);
+        listarFormacoes();
+        const id = localStorage.getItem("editFormacao");
+        if (id !== null) preencherCamposEdicaoFormacao(id);
     }
 
-    
-    if(formExperiencia){
-        formExperiencia.addEventListener("submit", adicionarExperiencia);
-        listarExperienciasAdmin();
-        carregarEdicaoExp();
+    const fExp = document.getElementById('formExperiencia');
+    if (fExp) {
+        fExp.addEventListener("submit", adicionarExperiencia);
+        listarExperiencias(); 
+        const id = localStorage.getItem("editExp");
+        if (id !== null) preencherCamposEdicaoExp(id);
     }
-};
+}

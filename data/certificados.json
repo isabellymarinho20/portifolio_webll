@@ -1,32 +1,22 @@
 [
-    {
-      "titulo": "Inglês Nível B1",
-      "instituicao": "TOEFL",
-      "categoria": "Internacional"
-    },
-    {
-      "titulo": "Desafio de Ideias ON",
-      "instituicao": "SENAI",
-      "categoria": "Tecnologia"
-    },
-    {
-      "titulo": "Python Essentials 1",
-      "instituicao": "Cisco",
-      "categoria": "Especialização"
-    },
-    {
-      "titulo": "Fundamentos FlutterFlow",
-      "instituicao": "NoCode",
-      "categoria": "Especialização"
-    },
-    {
-      "titulo": "Escola de Inovadores",
-      "instituicao": "INOVA CPS",
-      "categoria": "Especialização"
-    },
-    {
-      "titulo": "Introdução ao SCRUM",
-      "instituicao": "FGV",
-      "categoria": "Especialização"
-    }
-  ]
+  {
+    "titulo": "Desafio de Ideias ON",
+    "instituicao": "SENAI",
+    "categoria": "Tecnologia"
+  },
+  {
+    "titulo": "Fundamentos FlutterFlow",
+    "instituicao": "NoCode",
+    "categoria": "Especialização"
+  },
+  {
+    "titulo": "Escola de Inovadores",
+    "instituicao": "INOVA CPS",
+    "categoria": "Especialização"
+  },
+  {
+    "titulo": "Introdução ao SCRUM",
+    "instituicao": "FGV",
+    "categoria": "Especialização"
+  }
+]

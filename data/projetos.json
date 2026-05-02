@@ -1,44 +1,44 @@
 [
-    {
-      "titulo": "Análise de Falhas",
-      "tech": "Python | Flask",
-      "desc": "Software para análise técnica de equipamentos.",
-      "link": "https://github.com/isabellymarinho20/Structured-process-for-failure-analysis.git",
-      "img": "img/petro.jpg"
-    },
-    {
-      "titulo": "Análise de Documentação",
-      "tech": "N8N | Gemini",
-      "desc": "Treinamento de IA via API.",
-      "link": "https://github.com/isabellymarinho20/analise_documentacao.git",
-      "img": "img/documen.jpg"
-    },
-    {
-      "titulo": "Censo IBGE SJC",
-      "tech": "HTML | CSS | Python",
-      "desc": "Visualização de dados para transparência.",
-      "link": "https://github.com/FATCK06/ProjectAPI_FirstSemester.git",
-      "img": "img/sjc.png"
-    },
-    {
-      "titulo": "Controle do almoxarifado de eletrônica",
-      "tech": "HTML | CSS | JAVASCRIPT",
-      "desc": "Aplicação web para controlar o almoxarifado de eletronica.",
-      "link": "https://github.com/isabellymarinho20/Eletronics-Warehouse-Inventory-System-.git",
-      "img": "img/ele.jpg"
-    },
-    {
-      "titulo": "API para FastFood",
-      "tech": "JAVA",
-      "desc": "API em java para pedidos.",
-      "link": "https://github.com/isabellymarinho20/garagem.git",
-      "img": "img/fas.png"
-    },
-    {
-      "titulo": "IA para identificação de fogo e fumaça",
-      "tech": "Python | YOLO",
-      "desc": "IA para identificar fogo e fumaça.",
-      "link": "#",
-      "img": "img/fogo.jpg"
-    }
-  ]
+  {
+    "titulo": "Análise de Falhas",
+    "tech": "Python | Flask",
+    "desc": "Software para análise técnica de equipamentos.",
+    "link": "https://github.com/isabellymarinho20/Structured-process-for-failure-analysis.git",
+    "img": "img/petro.jpg"
+  },
+  {
+    "titulo": "Análise de Documentação",
+    "tech": "N8N | Gemini",
+    "desc": "Treinamento de IA via API.",
+    "link": "https://github.com/isabellymarinho20/analise_documentacao.git",
+    "img": "img/documen.jpg"
+  },
+  {
+    "titulo": "Censo IBGE SJC",
+    "tech": "HTML | CSS | Python",
+    "desc": "Visualização de dados para transparência.",
+    "link": "https://github.com/FATCK06/ProjectAPI_FirstSemester.git",
+    "img": "img/sjc.png"
+  },
+  {
+    "titulo": "Controle do almoxarifado de eletrônica",
+    "tech": "HTML | CSS | JAVASCRIPT",
+    "desc": "Aplicação web para controlar o almoxarifado de eletronica.",
+    "link": "https://github.com/isabellymarinho20/Eletronics-Warehouse-Inventory-System-.git",
+    "img": "img/ele.jpg"
+  },
+  {
+    "titulo": "API para FastFood",
+    "tech": "JAVA",
+    "desc": "API em java para pedidos.",
+    "link": "https://github.com/isabellymarinho20/garagem.git",
+    "img": "img/fas.png"
+  },
+  {
+    "titulo": "IA para identificação de fogo e fumaça",
+    "tech": "Python | YOLO",
+    "desc": "IA para identificar fogo e fumaça.",
+    "link": "#",
+    "img": "img/fogo.jpg"
+  }
+]

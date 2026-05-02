@@ -1,14 +1,14 @@
 [
-    {
-      "empresa": "Petrobras",
-      "periodo": "2024 — Atualmente",
-      "cargo": "Jovem Aprendiz",
-      "desc": "Curso de desenvolvimento de sistemas"
-    },
-    {
-      "empresa": "SanjaWorks",
-      "periodo": "2024 — 2025",
-      "cargo": "Estágio Técnico de Informática",
-      "desc": "Automações com N8N e IA"
-    }
-  ]
+  {
+    "empresa": "Petrobras",
+    "periodo": "2024 — Atualmente",
+    "cargo": "Jovem Aprendiz",
+    "desc": "Curso de desenvolvimento de sistemas"
+  },
+  {
+    "empresa": "SanjaWorks",
+    "periodo": "2024 — 2025",
+    "cargo": "Estágio Técnico de Informática",
+    "desc": "Automações com N8N e IA"
+  }
+]
